@@ -23,6 +23,7 @@ var (
 	procGetIcmpStatistics   = modiphlpapi.NewProc("GetIcmpStatistics")
 	procGetTcpStatistics    = modiphlpapi.NewProc("GetTcpStatistics")
 	procGetUdpStatistics    = modiphlpapi.NewProc("GetUdpStatistics")
+	procGetIpStatistics  = modiphlpapi.NewProc("GetIpStatistics")
 )
 
 const (
@@ -116,6 +117,41 @@ func (t *MIB_TCPSTATS) Name() string {
 	return "tcp"
 }
 
+// copied from https://msdn.microsoft.com/zh-cn/library/windows/desktop/aa366871(v=vs.85).aspx
+type MIB_IPSTATS struct {
+	dwForwarding      DWORD `Forwarding`
+	dwDefaultTTL      DWORD `DefaultTTL`
+	dwInReceives      DWORD `InReceives`
+	dwInHdrErrors     DWORD `InHdrErrors`
+	dwInAddrErrors    DWORD `InAddrErrors`
+	dwForwDatagrams   DWORD `ForwDatagrams`
+	dwInUnknownProtos DWORD `InUnknownProtos`
+	dwInDiscards      DWORD `InDiscards`
+	dwInDelivers      DWORD `InDelivers`
+	dwOutRequests     DWORD `OutRequests`
+	dwRoutingDiscards DWORD `RoutingDiscards`
+	dwOutDiscards     DWORD `OutDiscards`
+	dwOutNoRoutes     DWORD `OutNoRoutes`
+	dwReasmTimeout    DWORD `ReasmTimeout`
+	dwReasmReqds      DWORD `ReasmReqds`
+	dwReasmOks        DWORD `ReasmOks`
+	dwReasmFails      DWORD `ReasmFails`
+	dwFragOks         DWORD `FragOks`
+	dwFragFails       DWORD `FragFails`
+	dwFragCreates     DWORD `FragCreates`
+	dwNumIf           DWORD `NumIf`
+	dwNumAddr         DWORD `NumAddr`
+	dwNumRoutes       DWORD `NumRoutes`
+}
+type PMIB_IPSTATS *MIB_IPSTATS
+
+func (t *MIB_IPSTATS) GetStatsFunc() DWORD {
+	return GetIpStatistics(t)
+}
+func (t *MIB_IPSTATS) Name() string {
+	return "ip"
+}
+
 // copied from https://msdn.microsoft.com/en-us/library/windows/desktop/aa366929(v=vs.85).aspx
 type MIB_UDPSTATS struct {
 	dwInDatagrams  DWORD `InDatagrams`
@@ -157,7 +193,11 @@ func GetUdpStatistics(pStats PMIB_UDPSTATS) DWORD {
 		uintptr(unsafe.Pointer(pStats)))
 	return DWORD(ret)
 }
-
+func GetIpStatistics(pStats PMIB_IPSTATS) DWORD {
+	ret, _, _ := procGetIpStatistics.Call(
+		uintptr(unsafe.Pointer(pStats)))
+	return DWORD(ret)
+}
 func IOCounters(pernic bool) ([]IOCountersStat, error) {
 	return IOCountersWithContext(context.Background(), pernic)
 }
