@@ -1,0 +1,9 @@
+{
+    "name": "oracle",
+    "version": "1.0",
+    "type": "cmd",
+    "spec": {
+        "env": "DYLD_LIBRARY_PATH=/Users/wenhao/instantclient_11_2",
+        "cmd":"oracle"
+    }
+}

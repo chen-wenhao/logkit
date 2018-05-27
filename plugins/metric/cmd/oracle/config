@@ -1,0 +1,10 @@
+{
+    "dsn": "system/oracle@192.168.99.1:49161?as=sysdba",
+    "eventwait": true,
+    "hitratio": true,
+    "lib_dir": "oci",
+    "logicalIO": true,
+    "physicalIO": true,
+    "session": true,
+    "tablespace": true
+}

@@ -15,6 +15,7 @@ import (
 	config "github.com/qiniu/logkit/conf"
 	_ "github.com/qiniu/logkit/metric/all"
 	"github.com/qiniu/logkit/mgr"
+	metricPlugins "github.com/qiniu/logkit/plugins/metric"
 	"github.com/qiniu/logkit/times"
 	_ "github.com/qiniu/logkit/transforms/all"
 	. "github.com/qiniu/logkit/utils/models"
@@ -272,6 +273,7 @@ func main() {
 	if err = m.Watch(paths); err != nil {
 		log.Fatalf("watch path error %v", err)
 	}
+	metricPlugins.ProbeMetricPluginsOnce()
 	m.RestoreWebDir()
 
 	stopClean := make(chan struct{}, 0)
