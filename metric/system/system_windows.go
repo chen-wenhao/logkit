@@ -7,13 +7,14 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/w32"
 
 	"github.com/qiniu/log"
 
 	"github.com/qiniu/logkit/metric"
+	. "github.com/qiniu/logkit/metric/system/utils"
 	. "github.com/qiniu/logkit/utils/models"
+	"github.com/shirou/gopsutil/host"
 )
 
 // KeySystemUsages TypeMetricSystem的字段名称
@@ -40,11 +41,11 @@ func (s *WinSystemStats) Config() map[string]interface{} {
 }
 
 func (_ *WinSystemStats) Collect() (datas []map[string]interface{}, err error) {
-	lp, err := cpu.LoadPercentage()
+	lp, err := LoadPercentage()
 	if err != nil {
 		return
 	}
-	uptime := w32.GetTickCount64() / 1000 //second
+	uptime, _ := host.Uptime()
 	data := map[string]interface{}{
 		KeySystemLoad1:  lp,
 		KeySystemLoad5:  lp,
